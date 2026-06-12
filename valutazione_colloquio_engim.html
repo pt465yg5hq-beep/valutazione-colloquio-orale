@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valutazione Colloquio Finale – ENGIM Thiene</title>
+<style>
+  /* ── Reset & base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    --blu-scuro:  #1A3A6B;
+    --blu-medio:  #2D6A9F;
+    --blu-chiaro: #D0E4F7;
+    --blu-xchiaro:#EBF4FF;
+    --viola:      #7C5CBF;
+    --viola-ch:   #EDE0FF;
+    --verde:      #27AE60;
+    --verde-ch:   #D5F5E3;
+    --arancio:    #E67E22;
+    --arancio-ch: #FFF3E0;
+    --rosso:      #C0392B;
+    --rosso-ch:   #FADBD8;
+    --grigio-s:   #F5F7FA;
+    --grigio-m:   #D9DEE5;
+    --testo:      #1A1A2E;
+    --border:     #C5D3E0;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  body {
+    background: #eef2f8;
+    color: var(--testo);
+    min-height: 100vh;
+  }
+
+  /* ── Layout tabs ── */
+  .app-wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+
+  .tabs-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 0;
+    border-bottom: 3px solid var(--blu-scuro);
+  }
+  .tab-btn {
+    padding: 9px 20px;
+    border: none;
+    border-radius: 6px 6px 0 0;
+    background: #cdd8e9;
+    color: var(--blu-scuro);
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background .15s;
+    letter-spacing: .3px;
+  }
+  .tab-btn:hover { background: var(--blu-chiaro); }
+  .tab-btn.active { background: var(--blu-scuro); color: #fff; }
+  .tab-btn.student-tab {
+    background: #e8f5e9;
+    color: #1b5e20;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 9px 14px;
+  }
+  .tab-btn.student-tab.active { background: var(--verde); color: #fff; }
+  .tab-btn.student-tab:hover { background: #c8e6c9; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Scheda valutazione ── */
+  .scheda {
+    background: #fff;
+    border-radius: 0 8px 8px 8px;
+    box-shadow: 0 2px 12px rgba(26,58,107,.12);
+    overflow: hidden;
+  }
+
+  .scheda-header {
+    background: var(--blu-scuro);
+    color: #fff;
+    padding: 18px 24px 10px;
+  }
+  .scheda-header h1 { font-size: 17px; letter-spacing: .5px; }
+  .scheda-header p  { font-size: 11px; opacity: .8; margin-top: 3px; font-style: italic; }
+
+  .sezione-title {
+    background: var(--blu-medio);
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 6px 16px;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+  }
+
+  /* Dati studente */
+  .dati-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr 180px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .dati-label {
+    background: var(--blu-xchiaro);
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--blu-scuro);
+    padding: 8px 12px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+  .dati-input {
+    padding: 0;
+    border: none;
+    border-right: 1px solid var(--border);
+    border-bottom: 2px solid var(--blu-medio);
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+    color: var(--testo);
+    background: #fff;
+    padding: 8px 12px;
+    outline: none;
+    width: 100%;
+  }
+  .dati-input:focus { background: #fafeff; border-bottom-color: var(--blu-scuro); }
+
+  /* Tabella indicatori */
+  .rubrica-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .rubrica-table th {
+    padding: 8px 10px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .th-ind { background: var(--blu-scuro); color: #fff; width: 140px; }
+  .th-l0  { background: #fde8e8; color: #7B241C; }
+  .th-l1  { background: #fff3e0; color: #784212; }
+  .th-l2  { background: #e8f5e9; color: #1D6A39; }
+  .th-l3  { background: #e3f2fd; color: #154360; }
+  .th-pts { background: var(--blu-scuro); color: #fff; width: 100px; }
+
+  .rubrica-table td {
+    padding: 10px;
+    vertical-align: top;
+    border: 1px solid var(--border);
+    line-height: 1.45;
+  }
+  .td-ind {
+    background: var(--blu-xchiaro);
+    font-weight: bold;
+    font-size: 12px;
+    color: var(--blu-scuro);
+    text-align: center;
+    vertical-align: middle;
+  }
+  .td-l0 { background: #fde8e8; color: #7B241C; font-size: 11px; }
+  .td-l1 { background: #fff3e0; color: #784212; font-size: 11px; }
+  .td-l2 { background: #e8f5e9; color: #1D6A39; font-size: 11px; }
+  .td-l3 { background: #e3f2fd; color: #154360; font-size: 11px; }
+  .td-pts {
+    text-align: center;
+    vertical-align: middle;
+    background: var(--grigio-s);
+  }
+
+  /* Bottoni livello */
+  .livello-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .btn-livello {
+    border: none;
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform .1s, opacity .15s;
+    text-align: left;
+  }
+  .btn-livello:hover { transform: scale(1.03); }
+  .btn-livello.sel-0 { background: #C0392B; color: #fff; }
+  .btn-livello.sel-1 { background: #E67E22; color: #fff; }
+  .btn-livello.sel-2 { background: #27AE60; color: #fff; }
+  .btn-livello.sel-3 { background: #2D6A9F; color: #fff; }
+  .btn-livello:not(.sel-0):not(.sel-1):not(.sel-2):not(.sel-3) {
+    background: #e8edf3;
+    color: #555;
+    opacity: .85;
+  }
+
+  .punteggio-badge {
+    display: inline-block;
+    background: var(--blu-medio);
+    color: #fff;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 18px;
+    font-weight: bold;
+    min-width: 60px;
+    text-align: center;
+  }
+  .punteggio-badge.vuoto { background: #ccc; color: #888; }
+
+  /* Bonus */
+  .bonus-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--viola-ch);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .bonus-label { font-weight: bold; color: var(--viola); font-size: 13px; min-width: 180px; }
+  .btn-bonus {
+    border: 2px solid var(--viola);
+    border-radius: 6px;
+    padding: 6px 14px;
+    background: #fff;
+    color: var(--viola);
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-bonus.selected { background: var(--viola); color: #fff; }
+  .btn-bonus:hover:not(.selected) { background: var(--viola-ch); }
+
+  /* Osservazioni */
+  .oss-wrap { padding: 0; }
+  .oss-label {
+    background: #888;
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 5px 16px;
+    letter-spacing: .5px;
+  }
+  .oss-textarea {
+    width: 100%;
+    min-height: 70px;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    color: var(--testo);
+    resize: vertical;
+    outline: none;
+    background: #fff;
+  }
+  .oss-textarea:focus { background: #fafeff; }
+
+  /* Riepilogo */
+  .riepilogo-wrap { padding: 16px; background: var(--grigio-s); }
+  .riepilogo-title {
+    background: var(--blu-scuro);
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 7px 14px;
+    border-radius: 4px 4px 0 0;
+    letter-spacing: .5px;
+  }
+  .riepilogo-table { width: 100%; border-collapse: collapse; }
+  .riepilogo-table td { padding: 6px 12px; border: 1px solid var(--border); font-size: 12px; }
+  .riepilogo-table .r-nome { background: var(--blu-xchiaro); color: var(--blu-scuro); }
+  .riepilogo-table .r-max  { background: var(--grigio-s); color: #999; font-style: italic; text-align: center; font-size: 11px; }
+  .riepilogo-table .r-val  { background: var(--blu-chiaro); color: var(--blu-scuro); font-weight: bold; text-align: center; font-size: 14px; min-width: 70px; }
+  .riepilogo-table .r-bonus-nome { background: var(--viola-ch); color: var(--viola); }
+  .riepilogo-table .r-bonus-val  { background: var(--viola-ch); color: var(--viola); font-weight: bold; text-align: center; font-size: 14px; }
+
+  .totale-row { background: var(--blu-scuro) !important; }
+  .totale-row td { color: #fff !important; font-size: 16px !important; font-weight: bold !important; padding: 10px 12px !important; }
+  .totale-val { background: var(--blu-medio) !important; font-size: 22px !important; text-align: center; }
+
+  .giudizio-cell {
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    padding: 8px 12px;
+    border-radius: 4px;
+  }
+  .giu-ns { background: var(--rosso-ch); color: var(--rosso); }
+  .giu-su { background: var(--arancio-ch); color: var(--arancio); }
+  .giu-bu { background: var(--verde-ch); color: var(--verde); }
+  .giu-ot { background: var(--blu-chiaro); color: var(--blu-medio); }
+  .giu-vuoto { background: var(--grigio-s); color: #bbb; }
+
+  /* Bottone salva */
+  .salva-wrap { padding: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .btn-salva {
+    background: var(--verde);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 13px 32px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: .4px;
+    transition: background .15s, transform .1s;
+    box-shadow: 0 2px 8px rgba(39,174,96,.25);
+  }
+  .btn-salva:hover { background: #219a52; transform: translateY(-1px); }
+  .btn-salva:active { transform: translateY(0); }
+  .btn-reset {
+    background: #eee;
+    color: #666;
+    border: none;
+    border-radius: 8px;
+    padding: 13px 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-reset:hover { background: #ddd; }
+
+  /* Toast */
+  .toast {
+    display: none;
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1b5e20;
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 9999;
+    box-shadow: 0 4px 20px rgba(0,0,0,.25);
+    animation: slidein .3s ease;
+  }
+  @keyframes slidein { from { bottom: 0; opacity:0; } to { bottom: 28px; opacity: 1; } }
+
+  /* Elenco sessione */
+  .elenco-wrap {
+    background: #fff;
+    border-radius: 0 8px 8px 8px;
+    box-shadow: 0 2px 12px rgba(26,58,107,.12);
+    overflow: hidden;
+  }
+  .elenco-header { background: var(--blu-scuro); color: #fff; padding: 16px 20px; }
+  .elenco-header h2 { font-size: 15px; }
+  .elenco-header p  { font-size: 11px; opacity: .7; margin-top: 3px; }
+
+  .elenco-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .elenco-table th {
+    background: var(--blu-medio);
+    color: #fff;
+    padding: 8px 10px;
+    text-align: center;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .elenco-table td {
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .elenco-table tbody tr:nth-child(even) { background: var(--grigio-s); }
+  .elenco-table tbody tr:hover { background: var(--blu-xchiaro); }
+  .elenco-table .td-nome { text-align: left; font-weight: bold; color: var(--blu-scuro); cursor: pointer; }
+  .elenco-table .td-nome:hover { text-decoration: underline; }
+  .elenco-totale { font-weight: bold; font-size: 14px; }
+  .chip {
+    display: inline-block;
+    border-radius: 12px;
+    padding: 2px 10px;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .chip-ns { background: var(--rosso-ch); color: var(--rosso); }
+  .chip-su { background: var(--arancio-ch); color: var(--arancio); }
+  .chip-bu { background: var(--verde-ch); color: var(--verde); }
+  .chip-ot { background: var(--blu-chiaro); color: var(--blu-medio); }
+
+  .elenco-vuoto { padding: 40px; text-align: center; color: #aaa; font-style: italic; }
+
+  /* Scheda studente salvata */
+  .scheda-salvata {
+    background: #fff;
+    border-radius: 0 8px 8px 8px;
+    box-shadow: 0 2px 12px rgba(26,58,107,.12);
+    overflow: hidden;
+  }
+  .scheda-salvata-header {
+    padding: 16px 20px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .scheda-salvata-header h2 { font-size: 15px; }
+  .scheda-salvata-header p  { font-size: 11px; opacity: .8; }
+
+  .btn-stampa {
+    background: rgba(255,255,255,.2);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.5);
+    border-radius: 6px;
+    padding: 7px 16px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-stampa:hover { background: rgba(255,255,255,.35); }
+
+  .scheda-body { padding: 20px; }
+  .riga-indicatore {
+    display: grid;
+    grid-template-columns: 1fr 80px;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  .ind-nome { font-size: 12px; color: var(--blu-scuro); font-weight: bold; }
+  .ind-desc { font-size: 11px; color: #666; margin-top: 3px; }
+  .ind-pts  { text-align: center; font-weight: bold; font-size: 16px; }
+
+  /* Sezione azioni elenco */
+  .elenco-actions { padding: 12px 16px; background: var(--grigio-s); display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-esporta {
+    background: var(--blu-medio);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background .15s;
+  }
+  .btn-esporta:hover { background: var(--blu-scuro); }
+
+  /* Print */
+  @media print {
+    body { background: #fff; }
+    .tabs-bar, .salva-wrap, .btn-stampa, .elenco-actions { display: none !important; }
+    .scheda, .scheda-salvata, .elenco-wrap { box-shadow: none; border-radius: 0; }
+    .app-wrap { max-width: 100%; padding: 0; }
+  }
+
+  @media (max-width: 700px) {
+    .dati-grid { grid-template-columns: 1fr 1fr; }
+    .rubrica-table { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+<div class="app-wrap">
+
+  <!-- TABS BAR -->
+  <div class="tabs-bar" id="tabsBar">
+    <button class="tab-btn active" onclick="showTab('scheda')">Nuova scheda</button>
+    <button class="tab-btn" onclick="showTab('elenco')">Elenco sessione</button>
+    <!-- tab studenti dinamici -->
+  </div>
+
+  <!-- SCHEDA VALUTAZIONE -->
+  <div class="tab-panel active" id="tab-scheda">
+    <div class="scheda">
+      <div class="scheda-header">
+        <h1>VALUTAZIONE COLLOQUIO FINALE — ENGIM THIENE</h1>
+        <p>Rubrica ufficiale Opzione 1 &nbsp;|&nbsp; Esame Finale IeFP</p>
+      </div>
+
+      <div class="sezione-title">Dati studente</div>
+      <div class="dati-grid">
+        <div class="dati-label">Cognome e Nome</div>
+        <input class="dati-input" id="inp-nome" type="text" placeholder="Es. Rossi Mario" autocomplete="off">
+        <div class="dati-label">Classe / Indirizzo</div>
+        <input class="dati-input" id="inp-classe" type="text" placeholder="Es. 3A Estetica" autocomplete="off">
+        <div class="dati-label">Data colloquio</div>
+        <input class="dati-input" id="inp-data" type="text" placeholder="Es. 12/06/2025" autocomplete="off">
+        <div class="dati-label">Commissione / Valutatore</div>
+        <input class="dati-input" id="inp-comm" type="text" placeholder="Es. Bianchi, Verdi" autocomplete="off">
+      </div>
+
+      <div class="sezione-title">Rubrica — Indicatori e livelli</div>
+      <table class="rubrica-table" id="rubricaTable">
+        <thead>
+          <tr>
+            <th class="th-ind">INDICATORE</th>
+            <th class="th-l0">LIVELLO 0<br><small>0 pt.</small></th>
+            <th class="th-l1">LIVELLO 1<br><small style="color:#784212">fascia bassa</small></th>
+            <th class="th-l2">LIVELLO 2<br><small style="color:#1D6A39">fascia media</small></th>
+            <th class="th-l3">LIVELLO 3<br><small style="color:#154360">fascia alta</small></th>
+            <th class="th-pts">PUNTEGGIO</th>
+          </tr>
+        </thead>
+        <tbody id="rubricaBody">
+        </tbody>
+      </table>
+
+      <!-- Bonus inglese -->
+      <div class="bonus-row">
+        <span class="bonus-label">Bonus lingua inglese</span>
+        <button class="btn-bonus selected" data-bonus="0" onclick="setBonus(0)">0 pt.</button>
+        <button class="btn-bonus" data-bonus="2" onclick="setBonus(2)">2 pt.</button>
+        <button class="btn-bonus" data-bonus="4" onclick="setBonus(4)">4 pt.</button>
+        <button class="btn-bonus" data-bonus="5" onclick="setBonus(5)">5 pt.</button>
+      </div>
+
+      <!-- Osservazioni -->
+      <div class="oss-wrap">
+        <div class="oss-label">OSSERVAZIONI</div>
+        <textarea class="oss-textarea" id="inp-oss" placeholder="Note libere sul colloquio…"></textarea>
+      </div>
+
+      <!-- Riepilogo -->
+      <div class="riepilogo-wrap">
+        <div class="riepilogo-title">RIEPILOGO PUNTEGGIO</div>
+        <table class="riepilogo-table">
+          <tbody id="riepilogoBody">
+          </tbody>
+          <tr class="totale-row">
+            <td colspan="2" style="background:var(--blu-scuro)">PUNTEGGIO TOTALE</td>
+            <td style="background:var(--blu-scuro);font-size:11px;font-style:italic">max 100 pt.</td>
+            <td class="totale-val" id="totaleBadge">—</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="background:var(--grigio-s);font-weight:bold;color:var(--blu-scuro)">Giudizio sintetico</td>
+            <td id="giudizioBadge"><div class="giudizio-cell giu-vuoto">—</div></td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Bottone salva -->
+      <div class="salva-wrap">
+        <button class="btn-salva" onclick="salvaStudente()">SALVA STUDENTE E APRI NUOVA SCHEDA</button>
+        <button class="btn-reset" onclick="resetScheda(true)">Azzera scheda</button>
+        <span style="font-size:11px;color:#999;font-style:italic">Salva per archiviare la scheda in un tab separato e resettare il form.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ELENCO SESSIONE -->
+  <div class="tab-panel" id="tab-elenco">
+    <div class="elenco-wrap">
+      <div class="elenco-header">
+        <h2>ELENCO SESSIONE — Riepilogo Valutazioni</h2>
+        <p>Clicca sul nome di uno studente per riaprire la sua scheda.</p>
+      </div>
+      <table class="elenco-table">
+        <thead>
+          <tr>
+            <th>N°</th>
+            <th>Studente</th>
+            <th>Classe</th>
+            <th>Chiarezza</th>
+            <th>Correttezza</th>
+            <th>Consapevolezza</th>
+            <th>Progettualità</th>
+            <th>Bonus</th>
+            <th>TOTALE</th>
+            <th>Giudizio</th>
+          </tr>
+        </thead>
+        <tbody id="elencoBody">
+          <tr><td colspan="10" class="elenco-vuoto">Nessuno studente ancora valutato.</td></tr>
+        </tbody>
+      </table>
+      <div class="elenco-actions">
+        <button class="btn-esporta" onclick="esportaCSV()">Esporta CSV</button>
+        <button class="btn-esporta" onclick="stampaTutti()">Stampa elenco</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB STUDENTI SALVATI – generati dinamicamente -->
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ────────────────────────────────────────────────────────────────────
+//  DATI RUBRICA
+// ────────────────────────────────────────────────────────────────────
+const INDICATORI = [
+  {
+    id: 'chiarezza',
+    nome: 'Chiarezza dell\'esposizione',
+    max: 35,
+    punti: [0, 24, 30, 34],
+    livelli: [
+      'Si esprime in modo disorganizzato o parziale, con lacune lessicali anche nel linguaggio tecnico-professionale.',
+      'Si esprime in modo chiaro e organizzato, utilizzando un lessico basilare, anche tecnico-professionale.',
+      'Si esprime in modo chiaro e approfondito, con buona padronanza lessicale. Il linguaggio non verbale è coerente.',
+      'Linguaggio ricco e articolato, anche tecnico. Arricchisce con esempi personali. Il non verbale rafforza il verbale.'
+    ]
+  },
+  {
+    id: 'correttezza',
+    nome: 'Correttezza',
+    max: 35,
+    punti: [0, 24, 30, 34],
+    livelli: [
+      'I chiarimenti e/o gli approfondimenti richiesti presentano lacune importanti.',
+      'I chiarimenti e/o gli approfondimenti risultano sostanzialmente corretti.',
+      'I chiarimenti risultano corretti. Lo studente dimostra buona padronanza delle tematiche.',
+      'Perfettamente corretti sotto vari punti di vista. Buona padronanza e capacità di fare esempi concreti.'
+    ]
+  },
+  {
+    id: 'consapevolezza',
+    nome: 'Consapevolezza della propria preparazione',
+    max: 15,
+    punti: [0, 9, 12, 14],
+    livelli: [
+      'Non è consapevole del percorso fatto e dei risultati raggiunti. Argomentazioni poche o confuse.',
+      'Riconosce ciò che ha imparato e il suo valore. Argomenta, anche se a fatica, il proprio pensiero.',
+      'Riconosce il valore di quanto appreso. Supporta le idee con argomentazioni semplici ma coerenti.',
+      'Forte consapevolezza della trasversalità delle competenze. Idee personali con argomentazioni dettagliate e coerenti.'
+    ]
+  },
+  {
+    id: 'progettualita',
+    nome: 'Progettualità futura',
+    max: 15,
+    punti: [0, 9, 12, 14],
+    livelli: [
+      'Dimostra di non avere idee chiare rispetto al proprio futuro.',
+      'Descrive un progetto generale a breve scadenza in modo basilare.',
+      'Descrive e argomenta un progetto a breve/media scadenza con passi e strumenti identificati.',
+      'Progetto a media/lunga scadenza, consapevole delle difficoltà e di come superarle.'
+    ]
+  }
+];
+
+// Classi colore per i livelli
+const LIV_CLS  = ['td-l0','td-l1','td-l2','td-l3'];
+const BTN_SCLS = ['sel-0','sel-1','sel-2','sel-3'];
+const LIV_LABELS = ['0 pt.','fascia bassa','fascia media','fascia alta'];
+
+// ────────────────────────────────────────────────────────────────────
+//  STATE
+// ────────────────────────────────────────────────────────────────────
+let stato = {
+  punteggi: { chiarezza: null, correttezza: null, consapevolezza: null, progettualita: null },
+  bonus: 0,
+  studenti: []   // array di oggetti studente salvati
+};
+
+// ────────────────────────────────────────────────────────────────────
+//  BUILD RUBRICA TABLE
+// ────────────────────────────────────────────────────────────────────
+function buildRubrica() {
+  const tbody = document.getElementById('rubricaBody');
+  tbody.innerHTML = '';
+  INDICATORI.forEach(ind => {
+    const tr = document.createElement('tr');
+    // Indicatore
+    const tdInd = document.createElement('td');
+    tdInd.className = 'td-ind';
+    tdInd.innerHTML = `<strong>${ind.nome}</strong><br><small style="color:#999;font-weight:normal">max ${ind.max} pt.</small>`;
+    tr.appendChild(tdInd);
+    // Livelli
+    ind.livelli.forEach((desc, li) => {
+      const td = document.createElement('td');
+      td.className = LIV_CLS[li];
+      const puntoVal = ind.punti[li];
+      td.innerHTML = `<div style="font-weight:bold;margin-bottom:4px">${puntoVal} pt.</div><div>${desc}</div>
+        <div class="livello-btns"><button class="btn-livello" id="btn-${ind.id}-${li}" onclick="setLivello('${ind.id}',${li},${puntoVal})">${LIV_LABELS[li]} — ${puntoVal} pt.</button></div>`;
+      tr.appendChild(td);
+    });
+    // Punteggio badge
+    const tdPts = document.createElement('td');
+    tdPts.className = 'td-pts';
+    tdPts.innerHTML = `<div class="punteggio-badge vuoto" id="badge-${ind.id}">—</div>`;
+    tr.appendChild(tdPts);
+
+    tbody.appendChild(tr);
+  });
+
+  buildRiepilogo();
+}
+
+function buildRiepilogo() {
+  const tbody = document.getElementById('riepilogoBody');
+  tbody.innerHTML = '';
+  INDICATORI.forEach(ind => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="r-nome" colspan="2">${ind.nome}</td>
+      <td class="r-max">max ${ind.max} pt.</td>
+      <td class="r-val" id="rip-${ind.id}">—</td>`;
+    tbody.appendChild(tr);
+  });
+  // Bonus
+  const trB = document.createElement('tr');
+  trB.innerHTML = `<td class="r-bonus-nome" colspan="2">Bonus lingua inglese</td><td class="r-max">max 5 pt.</td><td class="r-bonus-val" id="rip-bonus">0</td>`;
+  tbody.appendChild(trB);
+}
+
+// ────────────────────────────────────────────────────────────────────
+//  INTERAZIONE
+// ────────────────────────────────────────────────────────────────────
+function setLivello(indId, livello, punti) {
+  stato.punteggi[indId] = punti;
+
+  // Aggiorna pulsanti (deseleziona tutti, seleziona quello cliccato)
+  const ind = INDICATORI.find(i => i.id === indId);
+  ind.livelli.forEach((_, li) => {
+    const btn = document.getElementById(`btn-${indId}-${li}`);
+    btn.className = 'btn-livello';
+    if (li === livello) btn.className = `btn-livello ${BTN_SCLS[li]}`;
+  });
+
+  // Badge punteggio
+  const badge = document.getElementById(`badge-${indId}`);
+  badge.textContent = punti;
+  badge.className = 'punteggio-badge';
+
+  // Riepilogo
+  document.getElementById(`rip-${indId}`).textContent = punti;
+
+  aggiornaTotale();
+}
+
+function setBonus(val) {
+  stato.bonus = val;
+  document.querySelectorAll('.btn-bonus').forEach(b => {
+    b.classList.toggle('selected', parseInt(b.dataset.bonus) === val);
+  });
+  document.getElementById('rip-bonus').textContent = val;
+  aggiornaTotale();
+}
+
+function aggiornaTotale() {
+  const vals = Object.values(stato.punteggi);
+  const compilati = vals.filter(v => v !== null);
+  if (compilati.length === 0) {
+    document.getElementById('totaleBadge').textContent = '—';
+    setGiudizio(null);
+    return;
+  }
+  const somma = compilati.reduce((a, b) => a + b, 0) + stato.bonus;
+  document.getElementById('totaleBadge').textContent = somma;
+  setGiudizio(somma);
+}
+
+function setGiudizio(tot) {
+  const el = document.getElementById('giudizioBadge');
+  if (tot === null) {
+    el.innerHTML = '<div class="giudizio-cell giu-vuoto">—</div>';
+    return;
+  }
+  let cls, label;
+  if (tot < 55)       { cls = 'giu-ns'; label = 'Non sufficiente'; }
+  else if (tot < 70)  { cls = 'giu-su'; label = 'Sufficiente'; }
+  else if (tot < 85)  { cls = 'giu-bu'; label = 'Buono'; }
+  else                { cls = 'giu-ot'; label = 'Ottimo'; }
+  el.innerHTML = `<div class="giudizio-cell ${cls}">${label}</div>`;
+}
+
+function calcolaTotale() {
+  const vals = Object.values(stato.punteggi).filter(v => v !== null);
+  if (vals.length === 0) return null;
+  return vals.reduce((a, b) => a + b, 0) + stato.bonus;
+}
+
+function calcolaGiudizio(tot) {
+  if (tot === null) return '—';
+  if (tot < 55) return 'Non sufficiente';
+  if (tot < 70) return 'Sufficiente';
+  if (tot < 85) return 'Buono';
+  return 'Ottimo';
+}
+
+// ────────────────────────────────────────────────────────────────────
+//  SALVA STUDENTE
+// ────────────────────────────────────────────────────────────────────
+function salvaStudente() {
+  const nome = document.getElementById('inp-nome').value.trim();
+  if (!nome) {
+    alert('Inserisci il nome dello studente prima di salvare.');
+    return;
+  }
+
+  const tot = calcolaTotale();
+  if (tot === null) {
+    if (!confirm('Alcuni punteggi non sono stati selezionati. Vuoi salvare comunque?')) return;
+  }
+
+  const studente = {
+    id: Date.now(),
+    nome:    nome,
+    classe:  document.getElementById('inp-classe').value.trim(),
+    data:    document.getElementById('inp-data').value.trim(),
+    comm:    document.getElementById('inp-comm').value.trim(),
+    oss:     document.getElementById('inp-oss').value.trim(),
+    chiarezza:     stato.punteggi.chiarezza,
+    correttezza:   stato.punteggi.correttezza,
+    consapevolezza:stato.punteggi.consapevolezza,
+    progettualita: stato.punteggi.progettualita,
+    bonus:   stato.bonus,
+    totale:  tot,
+    giudizio:calcolaGiudizio(tot),
+    punteggi: { ...stato.punteggi }
+  };
+
+  // Trova descrittori dei livelli selezionati
+  studente.livelli_scelti = {};
+  INDICATORI.forEach(ind => {
+    const punti = stato.punteggi[ind.id];
+    if (punti !== null) {
+      const li = ind.punti.indexOf(punti);
+      studente.livelli_scelti[ind.id] = { livello: li, desc: ind.livelli[li] };
+    }
+  });
+
+  stato.studenti.push(studente);
+
+  // Crea tab per questo studente
+  creaTabStudente(studente);
+
+  // Aggiorna elenco
+  aggiornaElenco();
+
+  // Mostra toast
+  mostraToast(`Scheda di ${nome} salvata! (${tot !== null ? tot + ' pt.' : '—'} — ${studente.giudizio})`);
+
+  // Reset scheda per il prossimo
+  resetScheda(false);
+
+  // Vai al tab del nuovo studente
+  showTab('studente-' + studente.id);
+}
+
+// ────────────────────────────────────────────────────────────────────
+//  TAB STUDENTE SALVATO
+// ────────────────────────────────────────────────────────────────────
+function creaTabStudente(s) {
+  const bar = document.getElementById('tabsBar');
+
+  // Bottone tab
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn student-tab';
+  btn.id = 'tabBtn-' + s.id;
+  btn.textContent = s.nome.split(' ')[0]; // primo nome per brevità
+  btn.title = s.nome;
+  btn.onclick = () => showTab('studente-' + s.id);
+  bar.appendChild(btn);
+
+  // Panel
+  const panel = document.createElement('div');
+  panel.className = 'tab-panel';
+  panel.id = 'tab-studente-' + s.id;
+
+  const giuCls = {
+    'Non sufficiente': 'giu-ns',
+    'Sufficiente': 'giu-su',
+    'Buono': 'giu-bu',
+    'Ottimo': 'giu-ot',
+    '—': 'giu-vuoto'
+  }[s.giudizio] || 'giu-vuoto';
+
+  const headerColor = {
+    'Non sufficiente': '#C0392B',
+    'Sufficiente': '#E67E22',
+    'Buono': '#27AE60',
+    'Ottimo': '#2D6A9F',
+    '—': '#888'
+  }[s.giudizio] || '#888';
+
+  let righeInd = '';
+  INDICATORI.forEach(ind => {
+    const p = s.punteggi[ind.id];
+    const lc = s.livelli_scelti?.[ind.id];
+    righeInd += `
+      <div class="riga-indicatore">
+        <div>
+          <div class="ind-nome">${ind.nome}</div>
+          ${lc ? `<div class="ind-desc">${lc.desc}</div>` : '<div class="ind-desc" style="color:#bbb">Punteggio non selezionato</div>'}
+        </div>
+        <div class="ind-pts" style="color:${p===null?'#bbb':headerColor}">${p !== null ? p + ' pt.' : '—'}</div>
+      </div>`;
+  });
+
+  panel.innerHTML = `
+    <div class="scheda-salvata">
+      <div class="scheda-salvata-header" style="background:${headerColor}">
+        <div>
+          <h2>${s.nome}</h2>
+          <p>${s.classe ? s.classe + ' &nbsp;|&nbsp; ' : ''}${s.data || ''}</p>
+        </div>
+        <button class="btn-stampa" onclick="stampaStudente(${s.id})">Stampa scheda</button>
+      </div>
+      <div class="scheda-body">
+        <p style="font-size:11px;color:#999;margin-bottom:12px">Commissione: <strong>${s.comm || '—'}</strong></p>
+        ${righeInd}
+        <div class="riga-indicatore">
+          <div>
+            <div class="ind-nome" style="color:var(--viola)">Bonus lingua inglese</div>
+          </div>
+          <div class="ind-pts" style="color:var(--viola)">${s.bonus} pt.</div>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:${headerColor};color:#fff;border-radius:8px;padding:14px 20px;text-align:center">
+            <div style="font-size:11px;opacity:.8;margin-bottom:4px">PUNTEGGIO TOTALE</div>
+            <div style="font-size:28px;font-weight:bold">${s.totale !== null ? s.totale : '—'}</div>
+            <div style="font-size:11px;opacity:.7">su 100 pt.</div>
+          </div>
+          <div style="border-radius:8px;padding:14px 20px;text-align:center;border:2px solid ${headerColor}">
+            <div style="font-size:11px;color:#999;margin-bottom:4px">GIUDIZIO</div>
+            <div class="giudizio-cell ${giuCls}" style="font-size:18px">${s.giudizio}</div>
+          </div>
+        </div>
+        ${s.oss ? `<div style="margin-top:14px;padding:12px;background:var(--grigio-s);border-radius:6px;border-left:3px solid ${headerColor}">
+          <div style="font-size:10px;font-weight:bold;color:#888;margin-bottom:4px">OSSERVAZIONI</div>
+          <div style="font-size:12px">${s.oss}</div>
+        </div>` : ''}
+      </div>
+    </div>`;
+
+  document.querySelector('.app-wrap').appendChild(panel);
+}
+
+// ────────────────────────────────────────────────────────────────────
+//  AGGIORNA ELENCO
+// ────────────────────────────────────────────────────────────────────
+function aggiornaElenco() {
+  const tbody = document.getElementById('elencoBody');
+  if (stato.studenti.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10" class="elenco-vuoto">Nessuno studente ancora valutato.</td></tr>';
+    return;
+  }
+
+  const giuChipCls = {
+    'Non sufficiente': 'chip-ns',
+    'Sufficiente': 'chip-su',
+    'Buono': 'chip-bu',
+    'Ottimo': 'chip-ot'
+  };
+
+  tbody.innerHTML = stato.studenti.map((s, i) => {
+    const cls = giuChipCls[s.giudizio] || '';
+    return `<tr>
+      <td>${i + 1}</td>
+      <td class="td-nome" onclick="showTab('studente-${s.id}')" title="Apri scheda">${s.nome}</td>
+      <td>${s.classe || '—'}</td>
+      <td>${s.chiarezza !== null ? s.chiarezza : '—'}</td>
+      <td>${s.correttezza !== null ? s.correttezza : '—'}</td>
+      <td>${s.consapevolezza !== null ? s.consapevolezza : '—'}</td>
+      <td>${s.progettualita !== null ? s.progettualita : '—'}</td>
+      <td>${s.bonus}</td>
+      <td class="elenco-totale" style="color:${s.totale !== null ? '#1A3A6B' : '#bbb'}">${s.totale !== null ? s.totale : '—'}</td>
+      <td><span class="chip ${cls}">${s.giudizio}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ────────────────────────────────────────────────────────────────────
+//  RESET SCHEDA
+// ────────────────────────────────────────────────────────────────────
+function resetScheda(conferma) {
+  if (conferma && !confirm('Azzerare tutti i dati della scheda corrente?')) return;
+
+  stato.punteggi = { chiarezza: null, correttezza: null, consapevolezza: null, progettualita: null };
+  stato.bonus = 0;
+
+  document.getElementById('inp-nome').value = '';
+  document.getElementById('inp-classe').value = '';
+  document.getElementById('inp-data').value = '';
+  document.getElementById('inp-comm').value = '';
+  document.getElementById('inp-oss').value = '';
+
+  // Reset badge punteggi
+  INDICATORI.forEach(ind => {
+    const badge = document.getElementById(`badge-${ind.id}`);
+    if (badge) { badge.textContent = '—'; badge.className = 'punteggio-badge vuoto'; }
+    document.getElementById(`rip-${ind.id}`).textContent = '—';
+    ind.livelli.forEach((_, li) => {
+      const btn = document.getElementById(`btn-${ind.id}-${li}`);
+      if (btn) btn.className = 'btn-livello';
+    });
+  });
+
+  setBonus(0);
+  document.getElementById('totaleBadge').textContent = '—';
+  document.getElementById('giudizioBadge').innerHTML = '<div class="giudizio-cell giu-vuoto">—</div>';
+  document.getElementById('rip-bonus').textContent = '0';
+
+  showTab('scheda');
+}
+
+// ────────────────────────────────────────────────────────────────────
+//  TABS
+// ────────────────────────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id)?.classList.add('active');
+  const btn = document.getElementById('tabBtn-' + id.replace('studente-', ''))
+    || document.querySelector(`.tab-btn[onclick="showTab('${id}')"]`);
+  if (btn) btn.classList.add('active');
+
+  // Attiva il bottone corretto nella bar
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.getAttribute('onclick') === `showTab('${id}')`) b.classList.add('active');
+  });
+}
+
+// ────────────────────────────────────────────────────────────────────
+//  TOAST
+// ────────────────────────────────────────────────────────────────────
+function mostraToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+
+// ────────────────────────────────────────────────────────────────────
+//  STAMPA STUDENTE
+// ────────────────────────────────────────────────────────────────────
+function stampaStudente(id) {
+  const s = stato.studenti.find(x => x.id === id);
+  if (!s) return;
+
+  const w = window.open('', '_blank');
+  const giuCls = {
+    'Non sufficiente': '#C0392B',
+    'Sufficiente': '#E67E22',
+    'Buono': '#27AE60',
+    'Ottimo': '#2D6A9F',
+    '—': '#888'
+  }[s.giudizio] || '#888';
+
+  let righeInd = '';
+  INDICATORI.forEach(ind => {
+    const p = s.punteggi[ind.id];
+    const lc = s.livelli_scelti?.[ind.id];
+    const li = lc ? lc.livello : -1;
+    const colori = ['#fde8e8','#fff3e0','#e8f5e9','#e3f2fd'];
+    const bg = li >= 0 ? colori[li] : '#f5f5f5';
+    righeInd += `
+      <tr>
+        <td style="padding:8px 12px;border:1px solid #ddd;font-weight:bold;font-size:12px;background:#ebf4ff;color:#1A3A6B;width:160px">${ind.nome}</td>
+        <td style="padding:8px 12px;border:1px solid #ddd;font-size:11px;background:${bg}">${lc ? lc.desc : '—'}</td>
+        <td style="padding:8px 12px;border:1px solid #ddd;text-align:center;font-weight:bold;font-size:14px;color:${giuCls};width:70px">${p !== null ? p : '—'}</td>
+      </tr>`;
+  });
+
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>Scheda ${s.nome}</title>
+    <style>body{font-family:Arial,sans-serif;margin:24px;color:#222;font-size:13px}
+    h1{font-size:16px}table{border-collapse:collapse;width:100%}
+    @media print{body{margin:12px}}</style>
+    </head><body>
+    <div style="background:#1A3A6B;color:#fff;padding:14px 18px;border-radius:4px;margin-bottom:16px">
+      <div style="font-size:13px;opacity:.7;margin-bottom:4px">ENGIM Thiene — Esame Finale IeFP</div>
+      <h1>Scheda di Valutazione Colloquio Finale</h1>
+    </div>
+    <table style="margin-bottom:14px">
+      <tr><td style="padding:6px 12px;background:#ebf4ff;font-weight:bold;border:1px solid #ddd;width:140px">Cognome e Nome</td>
+          <td style="padding:6px 12px;border:1px solid #ddd;font-weight:bold;font-size:15px">${s.nome}</td>
+          <td style="padding:6px 12px;background:#ebf4ff;font-weight:bold;border:1px solid #ddd;width:140px">Classe</td>
+          <td style="padding:6px 12px;border:1px solid #ddd">${s.classe || '—'}</td></tr>
+      <tr><td style="padding:6px 12px;background:#ebf4ff;font-weight:bold;border:1px solid #ddd">Data</td>
+          <td style="padding:6px 12px;border:1px solid #ddd">${s.data || '—'}</td>
+          <td style="padding:6px 12px;background:#ebf4ff;font-weight:bold;border:1px solid #ddd">Commissione</td>
+          <td style="padding:6px 12px;border:1px solid #ddd">${s.comm || '—'}</td></tr>
+    </table>
+    <table style="margin-bottom:14px">
+      <thead><tr>
+        <th style="padding:8px;background:#1A3A6B;color:#fff;border:1px solid #999;font-size:11px">INDICATORE</th>
+        <th style="padding:8px;background:#1A3A6B;color:#fff;border:1px solid #999;font-size:11px">DESCRITTORE LIVELLO RAGGIUNTO</th>
+        <th style="padding:8px;background:#1A3A6B;color:#fff;border:1px solid #999;font-size:11px">PT.</th>
+      </tr></thead>
+      <tbody>${righeInd}
+        <tr>
+          <td style="padding:8px 12px;border:1px solid #ddd;font-weight:bold;font-size:12px;background:#ede0ff;color:#7C5CBF">Bonus inglese</td>
+          <td style="padding:8px 12px;border:1px solid #ddd;font-size:11px;background:#ede0ff"></td>
+          <td style="padding:8px 12px;border:1px solid #ddd;text-align:center;font-weight:bold;color:#7C5CBF">${s.bonus}</td>
+        </tr>
+        <tr style="background:#1A3A6B;color:#fff">
+          <td colspan="2" style="padding:10px 12px;border:1px solid #999;font-weight:bold;font-size:14px">PUNTEGGIO TOTALE</td>
+          <td style="padding:10px 12px;border:1px solid #999;text-align:center;font-weight:bold;font-size:20px;background:#2D6A9F">${s.totale !== null ? s.totale : '—'}</td>
+        </tr>
+        <tr>
+          <td colspan="2" style="padding:8px 12px;border:1px solid #ddd;font-weight:bold">GIUDIZIO SINTETICO</td>
+          <td style="padding:8px 12px;border:1px solid #ddd;text-align:center;font-weight:bold;color:${giuCls}">${s.giudizio}</td>
+        </tr>
+      </tbody>
+    </table>
+    ${s.oss ? `<div style="border-left:4px solid ${giuCls};padding:10px 14px;background:#f9f9f9;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:bold;color:#888;margin-bottom:4px">OSSERVAZIONI</div>
+      <div style="font-size:12px">${s.oss}</div></div>` : ''}
+    <div style="margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div style="border-top:1px solid #999;padding-top:8px;font-size:11px;text-align:center">Firma Candidato</div>
+      <div style="border-top:1px solid #999;padding-top:8px;font-size:11px;text-align:center">Firma Commissione</div>
+    </div>
+    <script>window.print();<\/script>
+    </body></html>`);
+  w.document.close();
+}
+
+// ────────────────────────────────────────────────────────────────────
+//  ESPORTA CSV
+// ────────────────────────────────────────────────────────────────────
+function esportaCSV() {
+  if (stato.studenti.length === 0) { alert('Nessuno studente da esportare.'); return; }
+  const header = ['N°','Nome','Classe','Data','Chiarezza','Correttezza','Consapevolezza','Progettualità','Bonus','Totale','Giudizio','Osservazioni'];
+  const rows = stato.studenti.map((s, i) => [
+    i+1, `"${s.nome}"`, `"${s.classe}"`, `"${s.data}"`,
+    s.chiarezza ?? '—', s.correttezza ?? '—', s.consapevolezza ?? '—', s.progettualita ?? '—',
+    s.bonus, s.totale ?? '—', `"${s.giudizio}"`, `"${(s.oss||'').replace(/"/g,'""')}"`
+  ]);
+  const csv = [header, ...rows].map(r => r.join(';')).join('\n');
+  const blob = new Blob(['\ufeff'+csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'valutazioni_colloquio_ENGIM.csv';
+  a.click();
+}
+
+function stampaTutti() { window.print(); }
+
+// ────────────────────────────────────────────────────────────────────
+//  INIT
+// ────────────────────────────────────────────────────────────────────
+buildRubrica();
+</script>
+</body>
+</html>
